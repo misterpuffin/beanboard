@@ -1,10 +1,10 @@
 import { NavLink, Outlet, useSearchParams } from "react-router-dom"
-import { LogOut, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { cn, STATUS_LABELS } from "@/lib/utils"
-import { useAuth } from "@/hooks/use-auth"
 import { useProjects } from "@/hooks/use-projects"
 import { Button } from "@/components/ui/button"
 import { ProjectDetail } from "@/components/shared/project-detail"
+import { UserMenu } from "@/components/shared/user-menu"
 
 const navItems = [
   { to: "/pipeline", label: "Pipeline" },
@@ -83,7 +83,6 @@ function StatsBar() {
 }
 
 export function AppLayout() {
-  const { user, signOut } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedProject = searchParams.get("project")
 
@@ -109,15 +108,7 @@ export function AppLayout() {
               <Plus className="size-4" />
               New Project
             </Button>
-            <span className="text-xs text-muted-foreground">{user?.email}</span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={signOut}
-              title="Sign out"
-            >
-              <LogOut className="size-4" />
-            </Button>
+            <UserMenu />
           </div>
         </div>
         <nav className="flex gap-1 px-6">

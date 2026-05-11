@@ -62,7 +62,8 @@ insert into profiles (id, name, email, title, is_active) values
   ('c1000000-0000-0000-0000-000000000009', 'Jestinna',  'jestinna@firm.sg',  'Audit Senior',      true),
   ('c1000000-0000-0000-0000-000000000010', 'Yani',      'yani@firm.sg',      'Accounts Manager',  true),
   ('c1000000-0000-0000-0000-000000000011', 'Andrea',    'andrea@firm.sg',    'Auditor',           true),
-  ('c1000000-0000-0000-0000-000000000012', 'Rohan',     'rohan@firm.sg',     'Auditor',           true);
+  ('c1000000-0000-0000-0000-000000000012', 'Rohan',     'rohan@firm.sg',     'Auditor',           true),
+  ('c1000000-0000-0000-0000-000000000013', 'Admin',     'admin@sbtan.com',   'Managing Director', true);
 
 -- Clients
 insert into clients (id, name) values
