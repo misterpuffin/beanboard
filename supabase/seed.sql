@@ -1,3 +1,32 @@
+-- Dev auth user (admin@sbtan.com / password)
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, confirmation_token, recovery_token, email_change, email_change_token_new, email_change_token_current, reauthentication_token, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+values (
+  'a0000000-0000-0000-0000-000000000000',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated',
+  'authenticated',
+  'admin@sbtan.com',
+  '$2a$10$lHQAwXRwg5K4Ub12QjFsmuNKnRv.44FpR81khfaHqLOBjzqsivz3i',
+  now(),
+  '', '', '', '', '', '',
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  now(),
+  now()
+);
+
+insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+values (
+  'a0000000-0000-0000-0000-000000000000',
+  'a0000000-0000-0000-0000-000000000000',
+  'a0000000-0000-0000-0000-000000000000',
+  'email',
+  '{"sub":"a0000000-0000-0000-0000-000000000000","email":"admin@sbtan.com"}'::jsonb,
+  now(),
+  now(),
+  now()
+);
+
 -- Statuses (kanban columns)
 insert into statuses (id, label, position, color) values
   ('a1000000-0000-0000-0000-000000000001', 'Assigned',        0, '#6b7280'),

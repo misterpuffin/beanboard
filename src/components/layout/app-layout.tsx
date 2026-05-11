@@ -1,6 +1,9 @@
 import { NavLink, Outlet } from "react-router-dom"
+import { LogOut } from "lucide-react"
 import { cn, STATUS_LABELS } from "@/lib/utils"
+import { useAuth } from "@/hooks/use-auth"
 import { useProjects } from "@/hooks/use-projects"
+import { Button } from "@/components/ui/button"
 
 const navItems = [
   { to: "/pipeline", label: "Pipeline" },
@@ -79,6 +82,8 @@ function StatsBar() {
 }
 
 export function AppLayout() {
+  const { user, signOut } = useAuth()
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -88,6 +93,17 @@ export function AppLayout() {
               B
             </div>
             <h1 className="text-base font-semibold tracking-tight">beanboard</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{user?.email}</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={signOut}
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </Button>
           </div>
         </div>
         <nav className="flex gap-1 px-6">
