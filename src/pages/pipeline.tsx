@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
-import { ProjectDetail } from "@/components/shared/project-detail"
 import { QueryState } from "@/components/shared/query-state"
 import { useStatuses } from "@/hooks/use-statuses"
 import { useProjects } from "@/hooks/use-projects"
@@ -8,8 +7,7 @@ import { getInitials, getProjectLead, getNextDeadline, STATUS_LABELS } from "@/l
 import type { ProjectWithRelations } from "@/lib/types"
 
 export function PipelinePage() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const selectedProjectId = searchParams.get("project")
+  const [, setSearchParams] = useSearchParams()
   const { data: statuses, isLoading: statusesLoading, error: statusesError } = useStatuses()
   const { data: projects, isLoading: projectsLoading, error: projectsError, refetch } = useProjects()
 
@@ -22,10 +20,6 @@ export function PipelinePage() {
 
   function openProject(project: ProjectWithRelations) {
     setSearchParams({ project: project.id })
-  }
-
-  function closeProject() {
-    setSearchParams({})
   }
 
   return (
@@ -134,12 +128,6 @@ export function PipelinePage() {
         })}
       </div>
 
-      {selectedProjectId && (
-        <ProjectDetail
-          projectId={selectedProjectId}
-          onClose={closeProject}
-        />
-      )}
     </QueryState>
   )
 }

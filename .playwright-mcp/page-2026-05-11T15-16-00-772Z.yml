@@ -1,0 +1,39 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: B
+        - heading "beanboard" [level=1] [ref=e8]
+      - generic [ref=e9]:
+        - button "New Project" [ref=e10]:
+          - img
+          - text: New Project
+        - generic [ref=e11]: admin@sbtan.com
+        - button "Sign out" [ref=e12]:
+          - img
+    - navigation [ref=e13]:
+      - link "Pipeline" [ref=e14] [cursor=pointer]:
+        - /url: /pipeline
+      - link "Deadlines" [ref=e15] [cursor=pointer]:
+        - /url: /deadlines
+      - link "Schedule" [ref=e16] [cursor=pointer]:
+        - /url: /schedule
+      - link "Workload" [ref=e17] [cursor=pointer]:
+        - /url: /workload
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e20]: Active
+      - generic [ref=e21]: "--"
+    - generic [ref=e22]:
+      - generic [ref=e23]: Due this week
+      - generic [ref=e24]: "--"
+    - generic [ref=e25]:
+      - generic [ref=e26]: In review
+      - generic [ref=e27]: "--"
+    - generic [ref=e28]:
+      - generic [ref=e29]: Sent to client
+      - generic [ref=e30]: "--"
+  - main [ref=e31]:
+    - generic [ref=e32]:
+      - img [ref=e33]
+      - paragraph [ref=e35]: Loading...

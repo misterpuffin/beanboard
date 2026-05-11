@@ -137,6 +137,28 @@ pnpm dev                    # start frontend
 
 Supabase Studio at `http://localhost:54323`.
 
+### Playwright MCP
+
+The Playwright MCP is configured with Firefox for browser automation. Standard `browser_click` calls **will time out** on shadcn/base-ui buttons due to two issues:
+
+1. **`transition-all` + `active:translate-y-px`** on the button primitive causes Playwright's stability check to fail — the 1px animated transform on `:active` makes the bounding box shift between animation frames.
+2. **Post-click waiting** — even with `force: true`, Playwright hangs after dispatching the click, likely due to how base-ui's `ButtonPrimitive` handles events or React re-renders.
+
+**Workaround**: Use `dispatchEvent('click')` instead of `click()`:
+
+```ts
+// Via browser_run_code_unsafe:
+async (page) => {
+  const btn = page.locator('button:has-text("Save")');
+  await btn.dispatchEvent('click');
+}
+
+// Via browser_evaluate (for simple cases):
+() => document.querySelector('button').click()
+```
+
+Native `<select>`, `<input>`, and `<a>` elements work fine with standard Playwright clicks.
+
 ### Schema changes
 
 1. `pnpm exec supabase migration new <name>` — create new migration file

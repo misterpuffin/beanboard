@@ -1,9 +1,10 @@
-import { NavLink, Outlet } from "react-router-dom"
-import { LogOut } from "lucide-react"
+import { NavLink, Outlet, useSearchParams } from "react-router-dom"
+import { LogOut, Plus } from "lucide-react"
 import { cn, STATUS_LABELS } from "@/lib/utils"
 import { useAuth } from "@/hooks/use-auth"
 import { useProjects } from "@/hooks/use-projects"
 import { Button } from "@/components/ui/button"
+import { ProjectDetail } from "@/components/shared/project-detail"
 
 const navItems = [
   { to: "/pipeline", label: "Pipeline" },
@@ -83,6 +84,12 @@ function StatsBar() {
 
 export function AppLayout() {
   const { user, signOut } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedProject = searchParams.get("project")
+
+  function closeProject() {
+    setSearchParams({})
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -95,6 +102,13 @@ export function AppLayout() {
             <h1 className="text-base font-semibold tracking-tight">beanboard</h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => setSearchParams({ project: "new" })}
+            >
+              <Plus className="size-4" />
+              New Project
+            </Button>
             <span className="text-xs text-muted-foreground">{user?.email}</span>
             <Button
               variant="ghost"
@@ -129,6 +143,13 @@ export function AppLayout() {
       <main className="flex-1 px-6 py-4">
         <Outlet />
       </main>
+
+      {selectedProject && (
+        <ProjectDetail
+          projectId={selectedProject === "new" ? undefined : selectedProject}
+          onClose={closeProject}
+        />
+      )}
     </div>
   )
 }

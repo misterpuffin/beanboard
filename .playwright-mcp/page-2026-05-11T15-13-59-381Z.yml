@@ -1,0 +1,177 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: B
+        - heading "beanboard" [level=1] [ref=e8]
+      - generic [ref=e9]:
+        - button "New Project" [ref=e10]:
+          - img
+          - text: New Project
+        - generic [ref=e11]: admin@sbtan.com
+        - button "Sign out" [ref=e12]:
+          - img
+    - navigation [ref=e13]:
+      - link "Pipeline" [ref=e14] [cursor=pointer]:
+        - /url: /pipeline
+      - link "Deadlines" [ref=e15] [cursor=pointer]:
+        - /url: /deadlines
+      - link "Schedule" [ref=e16] [cursor=pointer]:
+        - /url: /schedule
+      - link "Workload" [ref=e17] [cursor=pointer]:
+        - /url: /workload
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e20]: Active
+      - generic [ref=e21]: "14"
+    - generic [ref=e22]:
+      - generic [ref=e23]: Due this week
+      - generic [ref=e24]: "21"
+      - generic [ref=e25]: 21 overdue
+    - generic [ref=e26]:
+      - generic [ref=e27]: In review
+      - generic [ref=e28]: "4"
+    - generic [ref=e29]:
+      - generic [ref=e30]: Sent to client
+      - generic [ref=e31]: "2"
+  - main [ref=e32]:
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - heading "Assigned" [level=2] [ref=e37]
+          - generic [ref=e38]: "3"
+        - generic [ref=e39]:
+          - button "GBS Pte Ltd YE 31 Dec 2025 final audit Audit 15 Mar JO" [ref=e40] [cursor=pointer]:
+            - generic [ref=e42]: GBS Pte Ltd
+            - paragraph [ref=e43]: YE 31 Dec 2025 final audit
+            - generic [ref=e44]:
+              - generic [ref=e46]: Audit
+              - generic [ref=e47]:
+                - generic [ref=e48]: 15 Mar
+                - generic "Joey" [ref=e49]: JO
+          - button "Noah's Ark Companion Animal Rescue & Education Society YE 31 Mar 2026 audit Audit 15 Jun ZA" [ref=e50] [cursor=pointer]:
+            - generic [ref=e52]: Noah's Ark Companion Animal Rescue & Education Society
+            - paragraph [ref=e53]: YE 31 Mar 2026 audit
+            - generic [ref=e54]:
+              - generic [ref=e56]: Audit
+              - generic [ref=e57]:
+                - generic [ref=e58]: 15 Jun
+                - generic "Zareen" [ref=e59]: ZA
+          - button "Bethesda (Depot Walk) Preschool Pte Ltd YE 31 Dec 2025 audit Audit 1 Mar JO" [ref=e60] [cursor=pointer]:
+            - generic [ref=e62]: Bethesda (Depot Walk) Preschool Pte Ltd
+            - paragraph [ref=e63]: YE 31 Dec 2025 audit
+            - generic [ref=e64]:
+              - generic [ref=e66]: Audit
+              - generic [ref=e67]:
+                - generic [ref=e68]: 1 Mar
+                - generic "John" [ref=e69]: JO
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - heading "In Progress" [level=2] [ref=e73]
+          - generic [ref=e74]: "4"
+        - generic [ref=e75]:
+          - button "ADCT Technologies Pte Ltd YE 31 Dec 2025 final audit Audit 28 Feb HC" [ref=e76] [cursor=pointer]:
+            - generic [ref=e78]: ADCT Technologies Pte Ltd
+            - paragraph [ref=e79]: YE 31 Dec 2025 final audit
+            - generic [ref=e80]:
+              - generic [ref=e82]: Audit
+              - generic [ref=e83]:
+                - generic [ref=e84]: 28 Feb
+                - generic "HC" [ref=e85]
+          - button "Aldon Technology Pte Ltd YE 30 Jun 2025 audit Audit 30 Sept JE" [ref=e86] [cursor=pointer]:
+            - generic [ref=e88]: Aldon Technology Pte Ltd
+            - paragraph [ref=e89]: YE 30 Jun 2025 audit
+            - generic [ref=e90]:
+              - generic [ref=e92]: Audit
+              - generic [ref=e93]:
+                - generic [ref=e94]: 30 Sept
+                - generic "Jestinna" [ref=e95]: JE
+          - button "JD Pacific Pte Ltd YE 31 Dec 2025 accounts prep Accounts 15 Feb YA" [ref=e96] [cursor=pointer]:
+            - generic [ref=e98]: JD Pacific Pte Ltd
+            - paragraph [ref=e99]: YE 31 Dec 2025 accounts prep
+            - generic [ref=e100]:
+              - generic [ref=e102]: Accounts
+              - generic [ref=e103]:
+                - generic [ref=e104]: 15 Feb
+                - generic "Yani" [ref=e105]: YA
+          - button "Cooltech Power International Pte Ltd GST Oct-Dec 2025 GST 31 Jan YA" [ref=e106] [cursor=pointer]:
+            - generic [ref=e108]: Cooltech Power International Pte Ltd
+            - paragraph [ref=e109]: GST Oct-Dec 2025
+            - generic [ref=e110]:
+              - generic [ref=e112]: GST
+              - generic [ref=e113]:
+                - generic [ref=e114]: 31 Jan
+                - generic "Yani" [ref=e115]: YA
+      - generic [ref=e116]:
+        - generic [ref=e117]:
+          - heading "Draft" [level=2] [ref=e119]
+          - generic [ref=e120]: "2"
+        - generic [ref=e121]:
+          - button "Cooltech Power International Pte Ltd YE 31 Dec 2025 final audit Audit 15 Feb JO" [ref=e122] [cursor=pointer]:
+            - generic [ref=e124]: Cooltech Power International Pte Ltd
+            - paragraph [ref=e125]: YE 31 Dec 2025 final audit
+            - generic [ref=e126]:
+              - generic [ref=e128]: Audit
+              - generic [ref=e129]:
+                - generic [ref=e130]: 15 Feb
+                - generic "Joey" [ref=e131]: JO
+          - button "Brahma Kumaris Raja Yoga Centre YE 31 Dec 2025 audit Audit 1 Feb ZA" [ref=e132] [cursor=pointer]:
+            - generic [ref=e134]: Brahma Kumaris Raja Yoga Centre
+            - paragraph [ref=e135]: YE 31 Dec 2025 audit
+            - generic [ref=e136]:
+              - generic [ref=e138]: Audit
+              - generic [ref=e139]:
+                - generic [ref=e140]: 1 Feb
+                - generic "Zareen" [ref=e141]: ZA
+      - generic [ref=e142]:
+        - generic [ref=e143]:
+          - heading "Review" [level=2] [ref=e145]
+          - generic [ref=e146]: "2"
+        - generic [ref=e147]:
+          - button "Family of Grace Evangelical Free Church YE 31 Dec 2025 audit Audit 15 Jan JO" [ref=e148] [cursor=pointer]:
+            - generic [ref=e150]: Family of Grace Evangelical Free Church
+            - paragraph [ref=e151]: YE 31 Dec 2025 audit
+            - generic [ref=e152]:
+              - generic [ref=e154]: Audit
+              - generic [ref=e155]:
+                - generic [ref=e156]: 15 Jan
+                - generic "John" [ref=e157]: JO
+          - button "Chelliah & Kiang LLC Solicitors report 2025 Solicitors 31 Jan HC" [ref=e158] [cursor=pointer]:
+            - generic [ref=e160]: Chelliah & Kiang LLC
+            - paragraph [ref=e161]: Solicitors report 2025
+            - generic [ref=e162]:
+              - generic [ref=e164]: Solicitors
+              - generic [ref=e165]:
+                - generic [ref=e166]: 31 Jan
+                - generic "HC" [ref=e167]
+      - generic [ref=e168]:
+        - generic [ref=e169]:
+          - heading "Final" [level=2] [ref=e171]
+          - generic [ref=e172]: "1"
+        - button "M&A Law Corporation Solicitors report 2025 Solicitors 31 Jan JE" [ref=e174] [cursor=pointer]:
+          - generic [ref=e176]: M&A Law Corporation
+          - paragraph [ref=e177]: Solicitors report 2025
+          - generic [ref=e178]:
+            - generic [ref=e180]: Solicitors
+            - generic [ref=e181]:
+              - generic [ref=e182]: 31 Jan
+              - generic "Jestinna" [ref=e183]: JE
+      - generic [ref=e184]:
+        - generic [ref=e185]:
+          - heading "Sent to Client" [level=2] [ref=e187]
+          - generic [ref=e188]: "2"
+        - generic [ref=e189]:
+          - button "Seng Realty & Development Pte Ltd YE 31 Dec 2025 audit Audit 15 Jan JO" [ref=e190] [cursor=pointer]:
+            - generic [ref=e192]: Seng Realty & Development Pte Ltd
+            - paragraph [ref=e193]: YE 31 Dec 2025 audit
+            - generic [ref=e194]:
+              - generic [ref=e196]: Audit
+              - generic [ref=e197]:
+                - generic [ref=e198]: 15 Jan
+                - generic "Joey" [ref=e199]: JO
+          - button "National Aerated Water Company (Pte) Ltd YE 31 Dec 2025 audit Audit 10 Jan" [ref=e200] [cursor=pointer]:
+            - generic [ref=e202]: National Aerated Water Company (Pte) Ltd
+            - paragraph [ref=e203]: YE 31 Dec 2025 audit
+            - generic [ref=e204]:
+              - generic [ref=e206]: Audit
+              - generic [ref=e208]: 10 Jan

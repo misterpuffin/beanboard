@@ -1,14 +1,12 @@
 import { useSearchParams } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
-import { ProjectDetail } from "@/components/shared/project-detail"
 import { QueryState } from "@/components/shared/query-state"
 import { useProjects } from "@/hooks/use-projects"
 import { getInitials, getProjectLead, STATUS_LABELS } from "@/lib/utils"
 import type { ProjectWithRelations } from "@/lib/types"
 
 export function DeadlinesPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const selectedProjectId = searchParams.get("project")
+  const [, setSearchParams] = useSearchParams()
   const { data: projects, isLoading, error, refetch } = useProjects()
 
   const rows = (projects ?? [])
@@ -22,10 +20,6 @@ export function DeadlinesPage() {
 
   function openProject(project: ProjectWithRelations) {
     setSearchParams({ project: project.id })
-  }
-
-  function closeProject() {
-    setSearchParams({})
   }
 
   return (
@@ -109,12 +103,6 @@ export function DeadlinesPage() {
         </table>
       </div>
 
-      {selectedProjectId && (
-        <ProjectDetail
-          projectId={selectedProjectId}
-          onClose={closeProject}
-        />
-      )}
     </QueryState>
   )
 }
