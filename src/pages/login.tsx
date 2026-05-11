@@ -21,7 +21,7 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   if (authLoading) return null
-  if (session) return <Navigate to="/pipeline" replace />
+  if (session) return <Navigate to="/board" replace />
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()

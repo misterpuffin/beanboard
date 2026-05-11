@@ -7,7 +7,7 @@ import { ProjectDetail } from "@/components/shared/project-detail"
 import { UserMenu } from "@/components/shared/user-menu"
 
 const navItems = [
-  { to: "/pipeline", label: "Pipeline" },
+  { to: "/board", label: "Board" },
   { to: "/deadlines", label: "Deadlines" },
   { to: "/schedule", label: "Schedule" },
   { to: "/workload", label: "Workload" },

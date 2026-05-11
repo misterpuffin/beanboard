@@ -6,7 +6,7 @@ import { useProjects } from "@/hooks/use-projects"
 import { getInitials, getProjectLead, getNextDeadline, STATUS_LABELS } from "@/lib/utils"
 import type { ProjectWithRelations } from "@/lib/types"
 
-export function PipelinePage() {
+export function BoardPage() {
   const [, setSearchParams] = useSearchParams()
   const { data: statuses, isLoading: statusesLoading, error: statusesError } = useStatuses()
   const { data: projects, isLoading: projectsLoading, error: projectsError, refetch } = useProjects()
@@ -28,8 +28,11 @@ export function PipelinePage() {
         {visibleStatuses.map((status) => {
           const statusProjects = (projects ?? []).filter((p) => p.status_id === status.id)
           return (
-            <div key={status.id} className="flex w-72 shrink-0 flex-col gap-2">
-              <div className="flex items-center gap-2 px-1 pb-1">
+            <div
+              key={status.id}
+              className="flex w-72 shrink-0 flex-col rounded-xl bg-muted/30 p-2.5"
+            >
+              <div className="flex items-center gap-2 px-1 pb-2">
                 <div
                   className="size-2 rounded-full"
                   style={{ backgroundColor: status.color ?? "#6b7280" }}
@@ -37,7 +40,7 @@ export function PipelinePage() {
                 <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {status.label}
                 </h2>
-                <span className="ml-auto rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
+                <span className="ml-auto rounded-full bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
                   {statusProjects.length}
                 </span>
               </div>
@@ -48,23 +51,20 @@ export function PipelinePage() {
                   const nextDeadline = getNextDeadline(project)
                   const isOverdue =
                     nextDeadline && new Date(nextDeadline.due_date) < new Date()
+                  const otherMembers = project.team.filter(
+                    (t) => t.role !== "lead"
+                  ).length
 
                   return (
                     <button
                       key={project.id}
                       type="button"
                       onClick={() => openProject(project)}
-                      className="group flex cursor-pointer flex-col gap-2.5 rounded-xl border bg-card p-3.5 text-left shadow-sm transition-all hover:shadow-md hover:ring-1 hover:ring-primary/20 active:scale-[0.99]"
-                      style={{
-                        borderLeftWidth: "3px",
-                        borderLeftColor: project.category?.color ?? "#e5e7eb",
-                      }}
+                      className="group flex cursor-pointer flex-col gap-3 rounded-xl border bg-card p-3.5 text-left shadow-sm transition-all hover:shadow-md hover:ring-1 hover:ring-primary/20 active:scale-[0.99]"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="text-sm font-medium leading-snug text-foreground">
-                          {project.client.name}
-                        </span>
-                      </div>
+                      <span className="text-sm font-semibold leading-snug text-foreground">
+                        {project.client.name}
+                      </span>
 
                       {project.description && (
                         <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
@@ -72,22 +72,20 @@ export function PipelinePage() {
                         </p>
                       )}
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          {project.category && (
-                            <Badge
-                              variant="secondary"
-                              className="border text-[10px]"
-                              style={{
-                                backgroundColor: `${project.category.color}10`,
-                                color: project.category.color ?? undefined,
-                                borderColor: `${project.category.color}25`,
-                              }}
-                            >
-                              {project.category.label}
-                            </Badge>
-                          )}
-                        </div>
+                      <div className="flex items-center justify-between gap-2">
+                        {project.category && (
+                          <Badge
+                            variant="secondary"
+                            className="border text-[10px]"
+                            style={{
+                              backgroundColor: `${project.category.color}10`,
+                              color: project.category.color ?? undefined,
+                              borderColor: `${project.category.color}25`,
+                            }}
+                          >
+                            {project.category.label}
+                          </Badge>
+                        )}
 
                         <div className="flex items-center gap-2">
                           {nextDeadline && (
@@ -98,6 +96,8 @@ export function PipelinePage() {
                                   : "text-muted-foreground"
                               }`}
                             >
+                              {nextDeadline.label}
+                              {" · "}
                               {new Date(nextDeadline.due_date).toLocaleDateString(
                                 "en-SG",
                                 { day: "numeric", month: "short" }
@@ -118,7 +118,8 @@ export function PipelinePage() {
                   )
                 })}
                 {statusProjects.length === 0 && (
-                  <div className="rounded-xl border border-dashed py-8 text-center text-xs text-muted-foreground">
+                  <div className="flex flex-col items-center gap-1 rounded-lg border border-dashed py-8 text-center text-xs text-muted-foreground">
+                    <span className="text-lg opacity-30">-</span>
                     No projects
                   </div>
                 )}
@@ -127,7 +128,6 @@ export function PipelinePage() {
           )
         })}
       </div>
-
     </QueryState>
   )
 }
