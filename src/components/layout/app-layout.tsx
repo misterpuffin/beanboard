@@ -1,7 +1,6 @@
-import { NavLink, Outlet, useSearchParams } from "react-router-dom"
-import { Plus } from "lucide-react"
-import { cn, STATUS_LABELS } from "@/lib/utils"
-import { useProjects } from "@/hooks/use-projects"
+import { NavLink, Outlet, useSearchParams, useNavigate, useLocation } from "react-router-dom"
+import { Plus, Settings } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ProjectDetail } from "@/components/shared/project-detail"
 import { UserMenu } from "@/components/shared/user-menu"
@@ -13,78 +12,12 @@ const navItems = [
   { to: "/workload", label: "Workload" },
 ]
 
-function StatsBar() {
-  const { data: projects } = useProjects()
-
-  const now = new Date()
-  const weekFromNow = new Date(now)
-  weekFromNow.setDate(weekFromNow.getDate() + 7)
-
-  const loading = !projects
-
-  let stats: { label: string; value: number | string; alert?: string }[]
-
-  if (loading) {
-    stats = [
-      { label: "Active", value: "--" },
-      { label: "Due this week", value: "--" },
-      { label: "In review", value: "--" },
-      { label: "Sent to client", value: "--" },
-    ]
-  } else {
-    const activeProjects = projects.filter(
-      (p) => !STATUS_LABELS.TERMINAL.includes(p.status.label)
-    )
-
-    const activeDeadlines = activeProjects.flatMap((p) => p.deadlines).filter((d) => !d.completed_at)
-    const dueThisWeek = activeDeadlines.filter((d) => new Date(d.due_date) <= weekFromNow)
-    const overdue = activeDeadlines.filter((d) => new Date(d.due_date) < now)
-
-    const inReview = projects.filter((p) =>
-      STATUS_LABELS.REVIEW.includes(p.status.label)
-    )
-    const sentToClient = projects.filter((p) =>
-      STATUS_LABELS.SENT.includes(p.status.label)
-    )
-
-    stats = [
-      { label: "Active", value: activeProjects.length },
-      {
-        label: "Due this week",
-        value: dueThisWeek.length,
-        alert: overdue.length > 0 ? `${overdue.length} overdue` : undefined,
-      },
-      { label: "In review", value: inReview.length },
-      { label: "Sent to client", value: sentToClient.length },
-    ]
-  }
-
-  return (
-    <div className="flex items-center gap-1 px-6 py-2">
-      {stats.map((stat, i) => (
-        <div
-          key={stat.label}
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3 py-1.5",
-            i === 0 && "bg-primary/5"
-          )}
-        >
-          <span className="text-xs text-muted-foreground">{stat.label}</span>
-          <span className="text-sm font-semibold tabular-nums">{stat.value}</span>
-          {stat.alert && (
-            <span className="rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
-              {stat.alert}
-            </span>
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
 export function AppLayout() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const selectedProject = searchParams.get("project")
+  const isManageRoute = location.pathname.startsWith("/manage")
 
   function closeProject() {
     setSearchParams({})
@@ -108,6 +41,15 @@ export function AppLayout() {
               <Plus className="size-4" />
               New Project
             </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => navigate("/manage/clients")}
+              title="Manage"
+              className={cn(isManageRoute && "bg-accent text-accent-foreground")}
+            >
+              <Settings className="size-4" />
+            </Button>
             <UserMenu />
           </div>
         </div>
@@ -130,7 +72,6 @@ export function AppLayout() {
           ))}
         </nav>
       </header>
-      <StatsBar />
       <main className="flex-1 px-6 py-4">
         <Outlet />
       </main>

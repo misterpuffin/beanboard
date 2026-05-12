@@ -16,6 +16,7 @@ import {
   useCreateScheduleEntry,
   useMoveScheduleEntry,
   useDeleteScheduleEntry,
+  useUpdateScheduleEntry,
 } from "@/hooks/use-schedule-entries"
 import { QueryState } from "@/components/shared/query-state"
 import { ScheduleToolbar } from "@/components/schedule/schedule-toolbar"
@@ -36,7 +37,7 @@ function getMonday(date: Date): Date {
 
 interface ActiveDrag {
   type: "sidebar-project" | "schedule-entry"
-  projectId: string
+  projectId: string | null
   entryId?: string
   entry?: ScheduleEntry
 }
@@ -81,6 +82,7 @@ export function SchedulePage() {
   const createEntry = useCreateScheduleEntry()
   const moveEntry = useMoveScheduleEntry()
   const deleteEntry = useDeleteScheduleEntry()
+  const updateEntry = useUpdateScheduleEntry()
 
   const isLoading = profilesLoading || projectsLoading || entriesLoading
   const error = profilesError || projectsError || entriesError
@@ -181,9 +183,27 @@ export function SchedulePage() {
 
   const handleChipClick = useCallback(
     (projectId: string) => {
-      setSearchParams({ project: projectId })
+      if (projectId) setSearchParams({ project: projectId })
     },
     [setSearchParams],
+  )
+
+  const handleCreateEntry = useCallback(
+    (profileId: string, date: string, description: string) => {
+      createEntry.mutate({
+        profile_id: profileId,
+        date,
+        description,
+      })
+    },
+    [createEntry],
+  )
+
+  const handleUpdateDescription = useCallback(
+    (entryId: string, description: string | null) => {
+      updateEntry.mutate({ id: entryId, description })
+    },
+    [updateEntry],
   )
 
   const handleDeleteEntry = useCallback(
@@ -213,9 +233,9 @@ export function SchedulePage() {
     setCurrentMonday(getMonday(new Date()))
   }, [])
 
-  const dragOverlayProject = activeDrag
+  const dragOverlayProject = activeDrag?.projectId
     ? projectMap.get(activeDrag.projectId)
-    : null
+    : undefined
 
   return (
     <QueryState
@@ -250,23 +270,25 @@ export function SchedulePage() {
               projectMap={projectMap}
               onChipClick={handleChipClick}
               onDeleteEntry={handleDeleteEntry}
+              onCreateEntry={handleCreateEntry}
+              onUpdateDescription={handleUpdateDescription}
             />
           </div>
         </div>
         <DragOverlay dropAnimation={null}>
-          {activeDrag && dragOverlayProject && (
-            activeDrag.type === "schedule-entry" && activeDrag.entry ? (
+          {activeDrag &&
+            (activeDrag.type === "schedule-entry" && activeDrag.entry ? (
               <ScheduleChip
                 entry={activeDrag.entry}
                 project={dragOverlayProject}
                 onChipClick={() => {}}
                 onDelete={() => {}}
+                onUpdateDescription={() => {}}
                 isDragOverlay
               />
-            ) : (
+            ) : dragOverlayProject ? (
               <SidebarChip project={dragOverlayProject} isDragOverlay />
-            )
-          )}
+            ) : null)}
         </DragOverlay>
       </DndContext>
     </QueryState>

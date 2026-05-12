@@ -26,8 +26,8 @@ export function ScheduleSidebar({ projects }: ScheduleSidebarProps) {
       )}
     >
       {open ? (
-        <div className="flex h-full flex-col rounded-xl border bg-card">
-          <div className="flex items-center justify-between border-b px-3 py-2">
+        <div className="flex h-full flex-col rounded-xl border bg-card shadow-sm">
+          <div className="flex items-center justify-between border-b px-3 py-2.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Projects
             </span>
@@ -39,8 +39,8 @@ export function ScheduleSidebar({ projects }: ScheduleSidebarProps) {
               <PanelLeftClose className="size-3.5" />
             </Button>
           </div>
-          <div className="border-b px-2 py-1.5">
-            <div className="flex items-center gap-1.5 rounded-md border bg-background px-2 py-1">
+          <div className="border-b px-2.5 py-2">
+            <div className="flex items-center gap-1.5 rounded-md border bg-background px-2 py-1.5">
               <Search className="size-3 text-muted-foreground" />
               <input
                 type="text"
@@ -51,8 +51,8 @@ export function ScheduleSidebar({ projects }: ScheduleSidebarProps) {
               />
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto px-2 py-1.5">
-            <div className="flex flex-col gap-1">
+          <div className="flex-1 overflow-y-auto px-2 py-2">
+            <div className="flex flex-col gap-1.5">
               {filtered.map((project) => (
                 <DraggableSidebarItem key={project.id} project={project} />
               ))}

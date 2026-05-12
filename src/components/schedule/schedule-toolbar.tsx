@@ -17,9 +17,9 @@ export function ScheduleToolbar({
   onToday,
 }: ScheduleToolbarProps) {
   return (
-    <div className="mb-4 flex items-center justify-between">
+    <div className="mb-5 flex items-center justify-between">
       <div>
-        <h2 className="text-base font-semibold">Weekly Schedule</h2>
+        <h2 className="text-lg font-semibold">Weekly Schedule</h2>
         <p className="text-sm text-muted-foreground">
           {weekStart.toLocaleDateString("en-SG", {
             day: "numeric",

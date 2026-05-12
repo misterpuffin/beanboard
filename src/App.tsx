@@ -6,6 +6,11 @@ import { BoardPage } from "@/pages/board"
 import { DeadlinesPage } from "@/pages/deadlines"
 import { SchedulePage } from "@/pages/schedule"
 import { WorkloadPage } from "@/pages/workload"
+import { ManagePage } from "@/pages/manage"
+import { ManageClientsPage } from "@/pages/manage/clients"
+import { ManageCategoriesPage } from "@/pages/manage/categories"
+import { ManageStatusesPage } from "@/pages/manage/statuses"
+import { ManageTeamPage } from "@/pages/manage/team"
 import { NotFoundPage } from "@/pages/not-found"
 
 function App() {
@@ -19,6 +24,13 @@ function App() {
           <Route path="deadlines" element={<DeadlinesPage />} />
           <Route path="schedule" element={<SchedulePage />} />
           <Route path="workload" element={<WorkloadPage />} />
+          <Route path="manage" element={<ManagePage />}>
+            <Route index element={<Navigate to="/manage/clients" replace />} />
+            <Route path="clients" element={<ManageClientsPage />} />
+            <Route path="categories" element={<ManageCategoriesPage />} />
+            <Route path="statuses" element={<ManageStatusesPage />} />
+            <Route path="team" element={<ManageTeamPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>

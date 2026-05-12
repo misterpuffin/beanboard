@@ -13,10 +13,16 @@
 - [ ] Filter by category, status, or team member
 - [ ] Pagination or virtual scrolling for long lists
 
-## Schedule (placeholder)
+## Schedule
 
-- [ ] Build out the weekly calendar with actual schedule data
-- [ ] Drag-to-assign interface for scheduling team members
+Goal: replace the Excel "Acct Sch" — not 1:1 parity, but cover the same needs (who's doing what, when) in a way that works as a webapp. Stay generic; don't over-fit to the current Excel workflow.
+
+- [ ] Make project optional on schedule entries + add a description field — entries can be standalone tasks ("AML training", "office cleaning") or project work with context ("draft report review")
+- [ ] Multiple entries per person per day
+- [ ] Leave tracking (AL, MC, CL, BL)
+- [ ] Public holidays shown on the schedule grid
+- [ ] Multi-week or month view for forward planning
+- [ ] Schedule entry editing (currently can only delete and recreate)
 
 ## Workload
 

@@ -340,3 +340,17 @@ insert into schedule_entries (profile_id, project_id, date) values
   ('c1000000-0000-0000-0000-000000000007', 'e1000000-0000-0000-0000-000000000007', '2026-05-12'),
   ('c1000000-0000-0000-0000-000000000007', 'e1000000-0000-0000-0000-000000000007', '2026-05-13'),
   ('c1000000-0000-0000-0000-000000000007', 'e1000000-0000-0000-0000-000000000007', '2026-05-14');
+
+-- Non-project schedule entries
+-- HC: AML training on Wednesday
+insert into schedule_entries (profile_id, date, description) values
+  ('c1000000-0000-0000-0000-000000000004', '2026-05-14', 'AML training');
+
+-- Malar: Annual leave Thu-Fri
+insert into schedule_entries (profile_id, date, description) values
+  ('c1000000-0000-0000-0000-000000000006', '2026-05-15', 'Annual leave'),
+  ('c1000000-0000-0000-0000-000000000006', '2026-05-16', 'Annual leave');
+
+-- Charlotte: CPD seminar on Friday
+insert into schedule_entries (profile_id, date, description) values
+  ('c1000000-0000-0000-0000-000000000007', '2026-05-16', 'CPD seminar');

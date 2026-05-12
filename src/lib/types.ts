@@ -54,7 +54,8 @@ export interface Deadline {
 export interface ScheduleEntry {
   id: string
   profile_id: string
-  project_id: string
+  project_id: string | null
+  description: string | null
   date: string
   created_at: string
 }

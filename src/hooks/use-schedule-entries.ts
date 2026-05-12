@@ -24,16 +24,45 @@ export function useCreateScheduleEntry() {
   return useMutation({
     mutationFn: async (entry: {
       profile_id: string
-      project_id: string
+      project_id?: string | null
+      description?: string | null
       date: string
     }) => {
       const { data, error } = await supabase
         .from("schedule_entries")
-        .insert(entry)
+        .insert({
+          profile_id: entry.profile_id,
+          project_id: entry.project_id ?? null,
+          description: entry.description ?? null,
+          date: entry.date,
+        })
         .select("*")
         .single()
       if (error) throw error
       return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedule-entries"] })
+    },
+  })
+}
+
+export function useUpdateScheduleEntry() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      description,
+    }: {
+      id: string
+      description: string | null
+    }) => {
+      const { error } = await supabase
+        .from("schedule_entries")
+        .update({ description })
+        .eq("id", id)
+      if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedule-entries"] })

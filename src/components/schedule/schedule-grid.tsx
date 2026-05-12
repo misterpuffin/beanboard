@@ -1,4 +1,4 @@
-import { getInitials } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 import { ScheduleCell } from "./schedule-cell"
 import type { Profile, ScheduleEntry, ProjectWithRelations } from "@/lib/types"
 
@@ -11,6 +11,8 @@ interface ScheduleGridProps {
   projectMap: Map<string, ProjectWithRelations>
   onChipClick: (projectId: string) => void
   onDeleteEntry: (entryId: string) => void
+  onCreateEntry: (profileId: string, date: string, description: string) => void
+  onUpdateDescription: (entryId: string, description: string | null) => void
 }
 
 export function ScheduleGrid({
@@ -20,21 +22,23 @@ export function ScheduleGrid({
   projectMap,
   onChipClick,
   onDeleteEntry,
+  onCreateEntry,
+  onUpdateDescription,
 }: ScheduleGridProps) {
   const now = new Date()
 
   return (
-    <div className="overflow-x-auto rounded-xl border bg-card">
+    <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
       <table className="w-full table-fixed border-collapse text-sm">
         <colgroup>
-          <col className="w-44" />
+          <col className="w-48" />
           {weekDates.map((_, i) => (
             <col key={i} />
           ))}
         </colgroup>
         <thead>
           <tr>
-            <th className="border-b border-r bg-muted/30 px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <th className="border-b-2 border-r border-b-border/60 bg-muted/50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Team
             </th>
             {weekDates.map((date, i) => {
@@ -42,14 +46,24 @@ export function ScheduleGrid({
               return (
                 <th
                   key={i}
-                  className={`border-b px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide ${
+                  className={cn(
+                    "border-b-2 border-b-border/60 px-4 py-3 text-left",
+                    i < 4 && "border-r",
                     isToday
-                      ? "bg-primary/5 text-primary"
-                      : "bg-muted/30 text-muted-foreground"
-                  } ${i < 4 ? "border-r" : ""}`}
+                      ? "bg-primary/8"
+                      : "bg-muted/50",
+                  )}
                 >
-                  <div>{DAY_LABELS[i]}</div>
-                  <div className="text-[10px] font-normal normal-case">
+                  <div className={cn(
+                    "text-xs font-semibold uppercase tracking-wide",
+                    isToday ? "text-primary" : "text-muted-foreground",
+                  )}>
+                    {DAY_LABELS[i]}
+                  </div>
+                  <div className={cn(
+                    "text-[11px] font-normal normal-case",
+                    isToday ? "text-primary/70" : "text-muted-foreground/60",
+                  )}>
                     {date.toLocaleDateString("en-SG", {
                       day: "numeric",
                       month: "short",
@@ -61,20 +75,28 @@ export function ScheduleGrid({
           </tr>
         </thead>
         <tbody>
-          {profiles.map((profile) => (
-            <tr key={profile.id} className="border-b last:border-b-0">
-              <td className="border-r px-4 py-1.5 overflow-hidden">
+          {profiles.map((profile, rowIndex) => (
+            <tr
+              key={profile.id}
+              className={cn(
+                "border-b last:border-b-0",
+                rowIndex % 2 === 1 && "bg-muted/15",
+              )}
+            >
+              <td className="border-r px-4 py-2">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
+                  <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
                     {getInitials(profile.name)}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium leading-tight">
+                  <div className="flex min-w-0 flex-col">
+                    <span className="truncate text-sm font-medium leading-tight">
                       {profile.name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {profile.title}
-                    </span>
+                    {profile.title && (
+                      <span className="truncate text-[11px] text-muted-foreground/70">
+                        {profile.title}
+                      </span>
+                    )}
                   </div>
                 </div>
               </td>
@@ -93,8 +115,11 @@ export function ScheduleGrid({
                     projectMap={projectMap}
                     isToday={isToday}
                     isLastCol={i === 4}
+                    isAltRow={rowIndex % 2 === 1}
                     onChipClick={onChipClick}
                     onDeleteEntry={onDeleteEntry}
+                    onCreateEntry={onCreateEntry}
+                    onUpdateDescription={onUpdateDescription}
                   />
                 )
               })}
