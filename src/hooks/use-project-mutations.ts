@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
-import type { TeamRole } from "@/lib/types"
+import type { TeamRole, ProjectWithRelations } from "@/lib/types"
 
 export interface ProjectFormData {
   client_id: string
@@ -110,6 +110,47 @@ export function useDeleteProject() {
       if (error) throw error
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] })
+    },
+  })
+}
+
+export function useUpdateProjectStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      statusId,
+    }: {
+      projectId: string
+      statusId: string
+    }) => {
+      const { error } = await supabase
+        .from("projects")
+        .update({ status_id: statusId })
+        .eq("id", projectId)
+      if (error) throw error
+    },
+    onMutate: async ({ projectId, statusId }) => {
+      await queryClient.cancelQueries({ queryKey: ["projects"] })
+      const previous = queryClient.getQueryData<ProjectWithRelations[]>(["projects"])
+      if (previous) {
+        queryClient.setQueryData<ProjectWithRelations[]>(
+          ["projects"],
+          previous.map((p) =>
+            p.id === projectId ? { ...p, status_id: statusId } : p
+          ),
+        )
+      }
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["projects"], context.previous)
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] })
     },
   })
