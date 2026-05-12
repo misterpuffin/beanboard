@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Navigate } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
+import { config } from "@/lib/config"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-const authProvider = import.meta.env.VITE_AUTH_PROVIDER ?? "email"
+const authProvider = config.authProvider
 
 export function LoginPage() {
   const { session, loading: authLoading } = useAuth()
