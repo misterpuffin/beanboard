@@ -15,10 +15,15 @@ export function getProjectLead(project: ProjectWithRelations): Profile | undefin
 }
 
 export function getNextDeadline(project: ProjectWithRelations): Deadline | undefined {
-  if (project.deadlines.length === 0) return undefined
-  return [...project.deadlines].sort(
+  const pending = project.deadlines.filter((d) => !d.completed_at)
+  if (pending.length === 0) return undefined
+  return [...pending].sort(
     (a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
   )[0]
+}
+
+export function formatDate(date: Date): string {
+  return date.toISOString().split("T")[0]
 }
 
 export const STATUS_LABELS: Record<string, readonly string[]> = {

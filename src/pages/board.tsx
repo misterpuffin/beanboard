@@ -51,10 +51,6 @@ export function BoardPage() {
                   const nextDeadline = getNextDeadline(project)
                   const isOverdue =
                     nextDeadline && new Date(nextDeadline.due_date) < new Date()
-                  const otherMembers = project.team.filter(
-                    (t) => t.role !== "lead"
-                  ).length
-
                   return (
                     <button
                       key={project.id}

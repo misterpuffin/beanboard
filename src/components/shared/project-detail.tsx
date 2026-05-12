@@ -7,6 +7,7 @@ import {
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
+  useToggleDeadline,
   type ProjectFormData,
 } from "@/hooks/use-project-mutations"
 import { ProjectForm } from "@/components/shared/project-form"
@@ -51,6 +52,7 @@ export function ProjectDetail({ projectId, onClose }: ProjectDetailProps) {
   const createProject = useCreateProject()
   const updateProject = useUpdateProject()
   const deleteProject = useDeleteProject()
+  const toggleDeadline = useToggleDeadline()
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -207,18 +209,27 @@ export function ProjectDetail({ projectId, onClose }: ProjectDetailProps) {
                 </label>
                 <div className="flex flex-col gap-1.5">
                   {sortedDeadlines.map((deadline) => {
-                    const isOverdue = new Date(deadline.due_date) < now
+                    const isCompleted = !!deadline.completed_at
+                    const isOverdue = !isCompleted && new Date(deadline.due_date) < now
                     return (
                       <div
                         key={deadline.id}
-                        className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2"
+                        className={`flex items-center gap-3 rounded-lg bg-muted/50 px-3 py-2 ${isCompleted ? "opacity-50" : ""}`}
                       >
-                        <span className="text-sm">{deadline.label}</span>
+                        <input
+                          type="checkbox"
+                          checked={isCompleted}
+                          onChange={() => toggleDeadline.mutate({ id: deadline.id, completed: !isCompleted })}
+                          className="size-4 shrink-0 cursor-pointer rounded border-muted-foreground/50 accent-primary"
+                        />
+                        <span className={`flex-1 text-sm ${isCompleted ? "line-through" : ""}`}>{deadline.label}</span>
                         <span
                           className={`text-sm tabular-nums ${
-                            isOverdue
-                              ? "font-medium text-destructive"
-                              : "text-muted-foreground"
+                            isCompleted
+                              ? "line-through text-muted-foreground"
+                              : isOverdue
+                                ? "font-medium text-destructive"
+                                : "text-muted-foreground"
                           }`}
                         >
                           {new Date(deadline.due_date).toLocaleDateString(

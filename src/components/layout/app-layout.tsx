@@ -36,7 +36,7 @@ function StatsBar() {
       (p) => !STATUS_LABELS.TERMINAL.includes(p.status.label)
     )
 
-    const activeDeadlines = activeProjects.flatMap((p) => p.deadlines)
+    const activeDeadlines = activeProjects.flatMap((p) => p.deadlines).filter((d) => !d.completed_at)
     const dueThisWeek = activeDeadlines.filter((d) => new Date(d.due_date) <= weekFromNow)
     const overdue = activeDeadlines.filter((d) => new Date(d.due_date) < now)
 

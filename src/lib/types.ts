@@ -48,6 +48,15 @@ export interface Deadline {
   project_id: string
   label: string
   due_date: string
+  completed_at: string | null
+}
+
+export interface ScheduleEntry {
+  id: string
+  profile_id: string
+  project_id: string
+  date: string
+  created_at: string
 }
 
 // Joined types for UI convenience

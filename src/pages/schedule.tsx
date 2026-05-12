@@ -1,106 +1,274 @@
+import { useState, useMemo, useCallback } from "react"
+import { useSearchParams } from "react-router-dom"
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core"
 import { useProfiles } from "@/hooks/use-profiles"
+import { useProjects } from "@/hooks/use-projects"
+import {
+  useScheduleEntries,
+  useCreateScheduleEntry,
+  useMoveScheduleEntry,
+  useDeleteScheduleEntry,
+} from "@/hooks/use-schedule-entries"
 import { QueryState } from "@/components/shared/query-state"
-import { getInitials } from "@/lib/utils"
+import { ScheduleToolbar } from "@/components/schedule/schedule-toolbar"
+import { ScheduleSidebar } from "@/components/schedule/schedule-sidebar"
+import { ScheduleGrid } from "@/components/schedule/schedule-grid"
+import { ScheduleChip, SidebarChip } from "@/components/schedule/schedule-chip"
+import { formatDate, STATUS_LABELS } from "@/lib/utils"
+import type { ProjectWithRelations, ScheduleEntry } from "@/lib/types"
+
+function getMonday(date: Date): Date {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  d.setDate(diff)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+interface ActiveDrag {
+  type: "sidebar-project" | "schedule-entry"
+  projectId: string
+  entryId?: string
+  entry?: ScheduleEntry
+}
 
 export function SchedulePage() {
-  const { data: profiles, isLoading, error, refetch } = useProfiles()
+  const [, setSearchParams] = useSearchParams()
+  const [currentMonday, setCurrentMonday] = useState(() => getMonday(new Date()))
+  const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null)
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-  const now = new Date()
-  const monday = new Date(now)
-  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  const weekDates = useMemo(
+    () =>
+      Array.from({ length: 5 }, (_, i) => {
+        const d = new Date(currentMonday)
+        d.setDate(currentMonday.getDate() + i)
+        return d
+      }),
+    [currentMonday],
+  )
 
-  const weekDates = days.map((_, i) => {
-    const d = new Date(monday)
-    d.setDate(monday.getDate() + i)
-    return d
-  })
+  const weekStart = formatDate(weekDates[0])
+  const weekEnd = formatDate(weekDates[4])
 
-  const activeProfiles = (profiles ?? []).filter((p) => p.is_active)
+  const {
+    data: profiles,
+    isLoading: profilesLoading,
+    error: profilesError,
+    refetch: refetchProfiles,
+  } = useProfiles()
+  const {
+    data: projects,
+    isLoading: projectsLoading,
+    error: projectsError,
+    refetch: refetchProjects,
+  } = useProjects()
+  const {
+    data: entries,
+    isLoading: entriesLoading,
+    error: entriesError,
+    refetch: refetchEntries,
+  } = useScheduleEntries(weekStart, weekEnd)
+
+  const createEntry = useCreateScheduleEntry()
+  const moveEntry = useMoveScheduleEntry()
+  const deleteEntry = useDeleteScheduleEntry()
+
+  const isLoading = profilesLoading || projectsLoading || entriesLoading
+  const error = profilesError || projectsError || entriesError
+
+  const activeProfiles = useMemo(
+    () => (profiles ?? []).filter((p) => p.is_active),
+    [profiles],
+  )
+
+  const sidebarProjects = useMemo(
+    () =>
+      (projects ?? []).filter(
+        (p) => !STATUS_LABELS.TERMINAL.includes(p.status.label),
+      ),
+    [projects],
+  )
+
+  const projectMap = useMemo(() => {
+    const map = new Map<string, ProjectWithRelations>()
+    for (const p of projects ?? []) {
+      map.set(p.id, p)
+    }
+    return map
+  }, [projects])
+
+  const entriesByCell = useMemo(() => {
+    const map = new Map<string, ScheduleEntry[]>()
+    for (const entry of entries ?? []) {
+      const key = `${entry.profile_id}:${entry.date}`
+      const list = map.get(key) ?? []
+      list.push(entry)
+      map.set(key, list)
+    }
+    return map
+  }, [entries])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+  )
+
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const data = event.active.data.current as ActiveDrag
+      if (data.type === "schedule-entry") {
+        const entry = (entries ?? []).find((e) => e.id === data.entryId)
+        setActiveDrag({ ...data, entry })
+      } else {
+        setActiveDrag(data)
+      }
+    },
+    [entries],
+  )
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      setActiveDrag(null)
+
+      if (!over) return
+
+      const overId = over.id as string
+      if (!overId.startsWith("cell:")) return
+
+      const parts = overId.split(":")
+      const targetProfileId = parts[1]
+      const targetDate = parts[2]
+
+      const dragData = active.data.current as ActiveDrag
+
+      if (dragData.type === "sidebar-project") {
+        createEntry.mutate({
+          profile_id: targetProfileId,
+          project_id: dragData.projectId,
+          date: targetDate,
+        })
+      } else if (dragData.type === "schedule-entry" && dragData.entryId) {
+        if (
+          dragData.entry?.profile_id === targetProfileId &&
+          dragData.entry?.date === targetDate
+        ) {
+          return
+        }
+        moveEntry.mutate({
+          id: dragData.entryId,
+          profile_id: targetProfileId,
+          date: targetDate,
+        })
+      }
+    },
+    [createEntry, moveEntry],
+  )
+
+  const handleDragCancel = useCallback(() => {
+    setActiveDrag(null)
+  }, [])
+
+  const handleChipClick = useCallback(
+    (projectId: string) => {
+      setSearchParams({ project: projectId })
+    },
+    [setSearchParams],
+  )
+
+  const handleDeleteEntry = useCallback(
+    (entryId: string) => {
+      deleteEntry.mutate(entryId)
+    },
+    [deleteEntry],
+  )
+
+  const handlePrevWeek = useCallback(() => {
+    setCurrentMonday((prev) => {
+      const d = new Date(prev)
+      d.setDate(d.getDate() - 7)
+      return d
+    })
+  }, [])
+
+  const handleNextWeek = useCallback(() => {
+    setCurrentMonday((prev) => {
+      const d = new Date(prev)
+      d.setDate(d.getDate() + 7)
+      return d
+    })
+  }, [])
+
+  const handleToday = useCallback(() => {
+    setCurrentMonday(getMonday(new Date()))
+  }, [])
+
+  const dragOverlayProject = activeDrag
+    ? projectMap.get(activeDrag.projectId)
+    : null
 
   return (
-    <QueryState isLoading={isLoading} error={error} onRetry={() => refetch()}>
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-semibold">Weekly Schedule</h2>
-            <p className="text-sm text-muted-foreground">
-              {monday.toLocaleDateString("en-SG", { day: "numeric", month: "short" })}
-              {" — "}
-              {weekDates[4].toLocaleDateString("en-SG", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </p>
+    <QueryState
+      isLoading={isLoading}
+      error={error}
+      onRetry={() => {
+        refetchProfiles()
+        refetchProjects()
+        refetchEntries()
+      }}
+    >
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <ScheduleToolbar
+          weekStart={weekDates[0]}
+          weekEnd={weekDates[4]}
+          onPrevWeek={handlePrevWeek}
+          onNextWeek={handleNextWeek}
+          onToday={handleToday}
+        />
+        <div className="flex gap-4">
+          <ScheduleSidebar projects={sidebarProjects} />
+          <div className="min-w-0 flex-1">
+            <ScheduleGrid
+              profiles={activeProfiles}
+              weekDates={weekDates}
+              entriesByCell={entriesByCell}
+              projectMap={projectMap}
+              onChipClick={handleChipClick}
+              onDeleteEntry={handleDeleteEntry}
+            />
           </div>
-          <p className="rounded-lg bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary">
-            Coming soon — schedule entries will appear here
-          </p>
         </div>
-        <div className="overflow-x-auto rounded-xl border bg-card">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th className="border-b border-r bg-muted/30 px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Team
-                </th>
-                {weekDates.map((date, i) => {
-                  const isToday = date.toDateString() === now.toDateString()
-                  return (
-                    <th
-                      key={days[i]}
-                      className={`border-b px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide ${
-                        isToday
-                          ? "bg-primary/5 text-primary"
-                          : "bg-muted/30 text-muted-foreground"
-                      } ${i < 4 ? "border-r" : ""}`}
-                    >
-                      <div>{days[i]}</div>
-                      <div className="text-[10px] font-normal normal-case">
-                        {date.toLocaleDateString("en-SG", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </div>
-                    </th>
-                  )
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {activeProfiles.map((profile) => (
-                <tr key={profile.id} className="border-b last:border-b-0">
-                  <td className="border-r px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
-                        {getInitials(profile.name)}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium leading-tight">
-                          {profile.name}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {profile.title}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  {weekDates.map((date, i) => {
-                    const isToday = date.toDateString() === now.toDateString()
-                    return (
-                      <td
-                        key={days[i]}
-                        className={`px-3 py-3 ${isToday ? "bg-primary/[0.02]" : ""} ${i < 4 ? "border-r" : ""}`}
-                      />
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <DragOverlay dropAnimation={null}>
+          {activeDrag && dragOverlayProject && (
+            activeDrag.type === "schedule-entry" && activeDrag.entry ? (
+              <ScheduleChip
+                entry={activeDrag.entry}
+                project={dragOverlayProject}
+                onChipClick={() => {}}
+                onDelete={() => {}}
+                isDragOverlay
+              />
+            ) : (
+              <SidebarChip project={dragOverlayProject} isDragOverlay />
+            )
+          )}
+        </DragOverlay>
+      </DndContext>
     </QueryState>
   )
 }

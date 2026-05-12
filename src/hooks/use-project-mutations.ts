@@ -115,6 +115,23 @@ export function useDeleteProject() {
   })
 }
 
+export function useToggleDeadline() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
+      const { error } = await supabase
+        .from("deadlines")
+        .update({ completed_at: completed ? new Date().toISOString() : null })
+        .eq("id", id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] })
+    },
+  })
+}
+
 // --- Diff helpers ---
 
 async function diffTeam(
